@@ -7,7 +7,6 @@
 
 extern char *TAG;
 
-#define I2C_MASTER_NUM 0
 #define I2C_MASTER_TIMEOUT_MS       1000
 
 void bno055_task(void *pvParams) {
@@ -47,14 +46,14 @@ void bno055_task(void *pvParams) {
         }
     }
 
-    ESP_ERROR_CHECK(i2c_driver_delete(I2C_MASTER_NUM));
+    ESP_ERROR_CHECK(i2c_driver_delete(CONFIG_I2C_MASTER_NUM));
     ESP_LOGI(TAG, "I2C unitialized successfully");
     vTaskDelete(NULL);
 }
 
 static esp_err_t register_read(uint8_t reg_addr, uint8_t *data, size_t len)
 {
-    return i2c_master_write_read_device(I2C_MASTER_NUM, BNO055_SENSOR_ADDR, &reg_addr, 1, data, len, I2C_MASTER_TIMEOUT_MS / portTICK_RATE_MS);
+    return i2c_master_write_read_device(CONFIG_I2C_MASTER_NUM, BNO055_SENSOR_ADDR, &reg_addr, 1, data, len, I2C_MASTER_TIMEOUT_MS / portTICK_RATE_MS);
 }
 
 static esp_err_t register_write_byte(uint8_t reg_addr, uint8_t data)
@@ -62,7 +61,7 @@ static esp_err_t register_write_byte(uint8_t reg_addr, uint8_t data)
     int ret;
     uint8_t write_buf[2] = {reg_addr, data};
 
-    ret = i2c_master_write_to_device(I2C_MASTER_NUM, BNO055_SENSOR_ADDR, write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS / portTICK_RATE_MS);
+    ret = i2c_master_write_to_device(CONFIG_I2C_MASTER_NUM, BNO055_SENSOR_ADDR, write_buf, sizeof(write_buf), I2C_MASTER_TIMEOUT_MS / portTICK_RATE_MS);
 
     return ret;
 }
