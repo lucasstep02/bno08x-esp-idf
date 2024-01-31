@@ -2,8 +2,18 @@
 // Created by bohm on 1/31/24.
 //
 
+#include <stdio.h>
+#include <freertos/portmacro.h>
+#include "esp_log.h"
+
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "driver/i2c.h"
+
 #ifndef BNO055_TEST_BNO055_H
 #define BNO055_TEST_BNO055_H
+
+#include <esp_err.h>
 
 #define BNO055_SENSOR_ADDR                 0x29
 
@@ -61,5 +71,15 @@ typedef enum {
     BNO055_VECTOR_LINEARACCEL = 0x28,    // Default: m/s²
     BNO055_VECTOR_GRAVITY = 0x2E         // Default: m/s²
 } bno055_vector_type_t;
+
+static esp_err_t register_read(uint8_t reg_addr, uint8_t *data, size_t len);
+static esp_err_t register_write_byte(uint8_t reg_addr, uint8_t data);
+
+void bno055_setPage(uint8_t page);
+void bno055_delay(int time);
+void bno055_setOperationMode(bno055_opmode_t mode);
+void bno055_setOperationModeConfig();
+void bno055_setOperationModeNDOF();
+void bno055_task(void *pvParams);
 
 #endif //BNO055_TEST_BNO055_H
