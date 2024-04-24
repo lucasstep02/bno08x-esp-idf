@@ -31,16 +31,25 @@ void bno055_task(void *pvParams) {
 
         bno055_setOperationModeNDOF();
 
-        uint8_t frequency = 50;
+        uint8_t frequency = 10;
         TickType_t xLastWakeTime;
         const TickType_t xFrequency = frequency / portTICK_PERIOD_MS;
 
         int16_t bno_raw_euler[8];
+        int16_t bno_gyro[3];
 
         while (1) {
             xLastWakeTime = xTaskGetTickCount();
             register_read(BNO055_VECTOR_EULER, bno_raw_euler, 6);
-            ESP_LOGI(TAG, "Yaw: %d, Roll: %d, Pitch: %d", bno_raw_euler[0], bno_raw_euler[1], bno_raw_euler[2]);
+            //ESP_LOGI(TAG, "[%d] Yaw: %d, Roll: %d, Pitch: %d", xTaskGetTickCount() / portTICK_PERIOD_MS, bno_raw_euler[0], bno_raw_euler[1], bno_raw_euler[2]);
+
+            register_read(BNO055_VECTOR_GYROSCOPE, bno_gyro, 6);
+            //ESP_LOGI(TAG, "[%d] Yaw Dot: %d, Roll Dot: %d, Pitch Dot: %d", xTaskGetTickCount() / portTICK_PERIOD_MS, bno_gyro[2], bno_gyro[1], bno_gyro[0]);
+
+            ESP_LOGI(TAG, "[%d]\tY: %d\tR: %d\tP: %d\tYD: %d\tRD: %d\tPD: %d",
+                     xTaskGetTickCount() / portTICK_PERIOD_MS,
+                     bno_raw_euler[0], bno_raw_euler[1], bno_raw_euler[2],
+                     bno_gyro[2], bno_gyro[1], bno_gyro[0]);
 
             vTaskDelayUntil(&xLastWakeTime, xFrequency);
         }
